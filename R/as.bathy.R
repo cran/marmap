@@ -1,21 +1,48 @@
-as.bathy <- function(xyz){
+as.bathy <- function(x){
 
-### xyz: three-column data.frame with longitude (x), latitude (y) and depth (z) (no default)
-### header: whether this table has a row of column names (default = FALSE)
+	require(raster)
+	# require(sp)
 
-	bath <- na.omit(xyz)
-	bath <- bath[order(bath[,2],bath[,1], decreasing=FALSE),]
+	if (is(x,"bathy")) stop("Object is already of class 'bathy'")
 
-	unique(bath[,2]) -> lat
-	unique(bath[,1]) -> lon
+	if (is(x,"SpatialGridDataFrame")) x <- raster(x)
+
+	# if x is a RasterLayer do this
+	if (is(x,"RasterLayer")) {
+		lat.min <- x@extent@xmin
+		lat.max <- x@extent@xmax
+		lon.min <- x@extent@ymin
+		lon.max <- x@extent@ymax
+		
+		nlat <- x@ncols
+		nlon <- x@nrows
+		
+		lon <- seq(lon.min, lon.max, length.out = nlon)
+		lat <- seq(lat.min, lat.max, length.out = nlat)
+		
+		bathy <- t(raster::as.matrix(flip(x,direction="y")))
+		colnames(bathy) <- lon
+		rownames(bathy) <- lat
+	}
 	
-	length(lon) -> brow
-	length(lat) -> bcol
+	# if not, it has to be a 3-column table (xyz format)
+	if (ncol(x)==3 & !exists("bathy")) {
+		bath <- na.omit(x)
+		bath <- bath[order(bath[,2],bath[,1], decreasing=FALSE),]
 
-	matrix(bath[,3], nrow=brow, ncol=bcol, byrow=FALSE, dimnames= list(lon,lat)) -> mat
+		unique(bath[,2]) -> lat
+		unique(bath[,1]) -> lon
 	
-	check.bathy(mat) -> ordered.mat
+		length(lon) -> brow
+		length(lat) -> bcol
+
+		bathy <- matrix(bath[,3], nrow=brow, ncol=bcol, byrow=FALSE, dimnames= list(lon,lat))
+	}
+
+	if (!exists("bathy")) stop("as.bathy requires a 3-column table, or an object of class RasterLayer or SpatialDataFrame")
+
+	check.bathy(bathy) -> ordered.mat
 	class(ordered.mat) <- "bathy"
 	return(ordered.mat)
-	
+
 }

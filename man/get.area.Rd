@@ -48,35 +48,50 @@ Benoit Simon-Bouhet and Eric Pante
 	bathyal <- get.area(hawaii, level.inf=-4000, level.sup=-1000)
 	abyssal <- get.area(hawaii, level.inf=min(hawaii), level.sup=-4000)
 	
-	image(mesopelagic$Lon, mesopelagic$Lat, mesopelagic$Area, col=c(rgb(0,0,0,0), rgb(.3,0,.7,.3)), add=TRUE)
-	image(bathyal$Lon, bathyal$Lat, bathyal$Area, col=c(rgb(0,0,0,0), rgb(.7,0,0,.3)), add=TRUE)
-	image(abyssal$Lon, abyssal$Lat, abyssal$Area, col=c(rgb(0,0,0,0), rgb(.7,.7,0.3,.3)), add=TRUE)
+	image(mesopelagic$Lon, mesopelagic$Lat, mesopelagic$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.3,0,.7,.3)), add=TRUE)
+	image(bathyal$Lon, bathyal$Lat, bathyal$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.7,0,0,.3)), add=TRUE)
+	image(abyssal$Lon, abyssal$Lat, abyssal$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.7,.7,0.3,.3)), add=TRUE)
 	
 	me <- round(mesopelagic$Square.Km, 0)
 	ba <- round(bathyal$Square.Km, 0)
 	ab <- round(abyssal$Square.Km, 0)
 
 	legend(x="bottomleft",
-		legend=c(paste("mesopelagic:",me,"km2"),paste("bathyal:",ba,"km2"), paste("abyssal:",ab,"km2")), 
-		col="black", pch=21, pt.bg=c(rgb(.3,0,.7,.3), rgb(.7,0,0,.3), rgb(.7,.7,0,.3)) )
+		legend=c(paste("mesopelagic:",me,"km2"),
+		         paste("bathyal:",ba,"km2"), 
+		         paste("abyssal:",ab,"km2")), 
+		col="black", pch=21, 
+		pt.bg=c(rgb(.3,0,.7,.3), rgb(.7,0,0,.3), rgb(.7,.7,0,.3)) )
 
 # Use of xlim and ylim
 	data(hawaii)
 	plot(hawaii, lwd=0.2)
 	
-	mesopelagic <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),level.inf=-1000, level.sup=-200)
-	bathyal <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),level.inf=-4000, level.sup=-1000)
-	abyssal <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),level.inf=min(hawaii), level.sup=-4000)
+	mesopelagic <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),
+	                        level.inf=-1000, level.sup=-200)
+	bathyal <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),
+	                        level.inf=-4000, level.sup=-1000)
+	abyssal <- get.area(hawaii, xlim=c(-161.4,-159), ylim=c(21,23),
+	                        level.inf=min(hawaii), level.sup=-4000)
 	
-	image(mesopelagic$Lon, mesopelagic$Lat, mesopelagic$Area, col=c(rgb(0,0,0,0), rgb(.3,0,.7,.3)), add=TRUE)
-	image(bathyal$Lon, bathyal$Lat, bathyal$Area, col=c(rgb(0,0,0,0), rgb(.7,0,0,.3)), add=TRUE)
-	image(abyssal$Lon, abyssal$Lat, abyssal$Area, col=c(rgb(0,0,0,0), rgb(.7,.7,0.3,.3)), add=TRUE)
+	image(mesopelagic$Lon, mesopelagic$Lat, mesopelagic$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.3,0,.7,.3)), add=TRUE)
+	image(bathyal$Lon, bathyal$Lat, bathyal$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.7,0,0,.3)), add=TRUE)
+	image(abyssal$Lon, abyssal$Lat, abyssal$Area, 
+	      col=c(rgb(0,0,0,0), rgb(.7,.7,0.3,.3)), add=TRUE)
 	
 	me <- round(mesopelagic$Square.Km, 0)
 	ba <- round(bathyal$Square.Km, 0)
 	ab <- round(abyssal$Square.Km, 0)
 	
 	legend(x="bottomleft",
-		legend=c(paste("mesopelagic:",me,"km2"),paste("bathyal:",ba,"km2"), paste("abyssal:",ab,"km2")), 
-		col="black", pch=21, pt.bg=c(rgb(.3,0,.7,.3), rgb(.7,0,0,.3), rgb(.7,.7,0,.3)) )
+		legend=c(paste("mesopelagic:",me,"km2"),
+		         paste("bathyal:",ba,"km2"), 
+		         paste("abyssal:",ab,"km2")), 
+		col="black", pch=21, 
+		pt.bg=c(rgb(.3,0,.7,.3), rgb(.7,0,0,.3), rgb(.7,.7,0,.3)) )
 }

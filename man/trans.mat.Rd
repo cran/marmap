@@ -50,7 +50,8 @@ plot(hawaii)
 # Compute transition object with no depth constraint
 trans1 <- trans.mat(hawaii)
 
-# Compute transition object with minimum depth constraint: path impossible in waters shallower than -200 meters depth
+# Compute transition object with minimum depth constraint: 
+# path impossible in waters shallower than -200 meters depth
 trans2 <- trans.mat(hawaii,min.depth=-200)
 
 # Visualizing results

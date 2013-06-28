@@ -1,8 +1,11 @@
 \documentclass[a4paper]{article}
 \usepackage{cite}
-\usepackage{fullpage}
+% \usepackage{fullpage}
+\usepackage{chngpage}
 \usepackage[pdftex,bookmarks=true,colorlinks=true,linkcolor=blue,citecolor=blue,breaklinks]{hyperref}
 \bibliographystyle{plos2009}
+
+\SweaveOpts{keep.source=TRUE}
 
 % \VignetteIndexEntry{marmap}
 
@@ -18,6 +21,9 @@
 \tableofcontents
 
 <<fig=FALSE,echo=FALSE>>=
+options(width=60,continue="  ")
+options(SweaveHooks=list(fig=function()
+              par(mar=c(5.1, 4.1, 1.1, 2.1))))
 library(marmap)
 read.bathy('png.xyz', header=F, sep="\t") -> papoue
 @
@@ -38,9 +44,10 @@ In this section, we will produce a bathymetric maps of Papua New Guinea, Hawaii 
 
 Launch R. Navigate to your work folder (for example, with \verb"setwd()"). Then launch the marmap  package.  The simplest way to get bathymetric data into R for use with \verb"marmap" is to use the \verb"getNOAA.bathy()" function. It queries the ETOPO1 dataset (Armante and Eakins 2009) hosted on the NOAA server, based on coordinate a resolution given by the user. In one line, we can get the data into R and start plotting: 
 
-<<fig=FALSE,echo=TRUE>>=
+<<echo=TRUE>>=
 library(marmap)
-getNOAA.bathy(lon1=140,lon2=155,lat1=-13,lat2=0, resolution=10) -> papoue
+getNOAA.bathy(lon1 = 140, lon2 = 155, lat1 = -13, lat2 = 0, 
+	resolution = 10) -> papoue
 summary(papoue)
 @
 
@@ -57,24 +64,26 @@ plot(papoue)
 We can now use some of the options of \verb"plot.bathy()" to make the map more informative. First, we can plot a heat map, using the built in color palette. We can also add a scale in kilometers. 
 
 <<fig=TRUE,echo=TRUE>>=
-plot(papoue, image=T)
-scaleBathy(papoue, deg=2, x="bottomleft", inset=5)
+plot(papoue, image = TRUE)
+scaleBathy(papoue, deg = 2, x = "bottomleft", inset = 5)
 @
 
 The \verb"bpal" options allows you to use a custom color palette, which can be easily prepared with the R function \verb"colorRampPalette()". We store the color ramp in the object called \verb"blues", and when we call it in \verb"plot.bathy()", we specify how many colors need to be used in the palette (here 100). 
 
 <<fig=TRUE,echo=TRUE>>=
-colorRampPalette(c("red","purple","blue","cadetblue1","white")) -> blues
-plot(papoue, image=T, bpal=blues(100))
+colorRampPalette(c("red","purple","blue","cadetblue1",
+	"white")) -> blues
+plot(papoue, image = TRUE, bpal = blues(100))
 @
 
 For maps using the \verb"image" option of \verb"plot.bathy()", you will see that the PDF rendering of your map is slightly different from the way it looks in R: the small space between cells becomes visible. This is probably due to the way your system handles PDFs. A simple way around this phenomenon is to export the map in a raster (rather than vector) format. You can use the \verb"tiff()", \verb"jpeg()", \verb"bmp()" or \verb"png()" functions available in R. This map looks a little crowded ; let's dim the isobaths (dark grey color and lighter line width), and strengthen the coastline (black color and thicker line width). The deepest isobaths will be hard to see on a dark blue background ; we can therefore choose to plot these in light grey to improve contrast. The option \verb"drawlabel" controls whether isobath labels (e.g. ``-3000'') are plotted or not. 
 
 <<fig=TRUE,echo=TRUE>>=
-plot(papoue, image=T, bpal=blues(100),
-        deep=c(-9000,-3000,0), shallow=c(-3000,-10, 0), step=c(1000, 1000, 0), 
-        col=c("lightgrey","darkgrey","black"), lwd=c(0.8,0.8,1), lty=c(1,1,1), 
-        drawlabel=c(F,F,F))
+plot(papoue, image = TRUE, bpal = blues(100),
+	deep = c(-9000, -3000, 0), shallow = c(-3000, -10, 0),
+	step = c(1000, 1000, 0), lwd = c(0.8, 0.8, 1),
+	col = c("lightgrey", "darkgrey", "black"),
+	lty = c(1, 1, 1), drawlabel = c(FALSE, FALSE, FALSE))
 @
 
 \subsection{Using bathymetric data for further analysis}
@@ -82,25 +91,28 @@ plot(papoue, image=T, bpal=blues(100),
 We can use the \verb"get.transect()" and \verb"plotProfile()" functions to extract and plot a depth cross section from the \verb"papoue" dataset. \verb"get.transect()" will use the coordinates you input to calculate the coordinates and depths along your transect, and calculate the great circle distance separating each point along the transect from the point of origin (in kilometers). 
 
 <<fig=FALSE,echo=TRUE>>=
-get.transect(papoue, 151,-6, 153, -7, distance=T)
+get.transect(papoue, 151, -6, 153, -7, distance = TRUE)
 @
 
 We can plot that information on a map and make a cross section plot with \verb"plotProfile()". Again, the very low resolution of the dataset produces an analysis with little information. You can get transect information and make a cross-section plot by directly clicking on the map, using the \verb"locator" option of \verb"get.transect()".
 
-<<fig=TRUE,echo=TRUE>>=
-get.transect(papoue, 151,-6, 153, -7, distance=T) -> transect
+\setkeys{Gin}{width=\textwidth}
+<<fig=TRUE,echo=TRUE,width=8,height=4>>=
+get.transect(papoue, 151, -6, 153, -7, 
+	distance = TRUE) -> transect
 plotProfile(transect)
 @
+\setkeys{Gin}{width=.8\textwidth}
 
  We can also use \verb"get.sample()" and \verb"get.depth()" to retrieve depth information and sample information by clicking on the map (see help pages). The output will look like this (pound symbols are followed by comments): 
  
- \begin{verbatim}
- > # click once on the map:
- > get.depth(papoue)  
- [1] -1655
- 
- > # click twice on the map to delimit an area:
- > get.depth(papoue) 
+\begin{verbatim}
+> # click once on the map:
+> get.depth(papoue)  
+[1] -1655
+
+> # click twice on the map to delimit an area:
+> get.depth(papoue) 
 Bathymetric data of class 'bathy', with 17 rows and 14 columns
 Latitudinal range: -5.833333 to -3.666667 
 Longitudinal range: 146.833333 to 149.5 
@@ -122,39 +134,44 @@ First 5 columns and rows of the bathymetric matrix:
 \verb"get.sample()" is used in combination with a table containing sampling information. Let's make a fake table of sampling data, print it in a file, then, for the sake of the example, import it in R as a csv file, and use it for plotting and use with \verb"get.sample()": 
 
 <<fig=FALSE,echo=TRUE>>=
-x = c(142.1390,142.9593,144.0466,145.9141,
-         145.9372,146.0115,145.9141,146.8589,
-         146.6651,147.1772,147.2856,152.7475,
-         152.5025,152.7816,152.9010,153.2314)
-y = c(-2.972065,-3.209449,-3.391399,-4.675720,
-         -4.914153,-5.130116,-5.329641,-2.587792,
-         -2.897221,-3.250368,-2.720080,-6.005769,
-         -6.211152,-6.326915,-5.990206,-6.023344)
+x = c(142.1390, 142.9593, 144.0466, 145.9141,
+      145.9372, 146.0115, 145.9141, 146.8589,
+      146.6651, 147.1772, 147.2856, 152.7475,
+      152.5025, 152.7816, 152.9010, 153.2314)
+y = c(-2.972065, -3.209449, -3.391399, -4.675720,
+      -4.914153, -5.130116, -5.329641, -2.587792,
+      -2.897221, -3.250368, -2.720080, -6.005769,
+      -6.211152, -6.326915, -5.990206, -6.023344)
 
-paste("station",1:16, sep="") -> station
+paste("station",1:16, sep = "") -> station
 data.frame(x, y, station) -> sampling
-write.table(sampling, "sampling.csv", sep=",", quote=F, row.names=F)
+write.table(sampling, "sampling.csv", sep = ",", 
+	quote = FALSE, row.names = FALSE)
 @
 
 We have now created a small example file that we can use for further analysis. Let's load these data, and plot them on a map:
 
 <<fig=TRUE,echo=TRUE>>=
-read.csv("sampling.csv", header=TRUE) -> samp
-head(samp) # a little preview of the first 6 of the 16 lines of the dataset. 
-plot(papoue, image=T, bpal=blues(100),
-        deep=c(-9000,-3000,0), shallow=c(-3000,-10, 0), step=c(1000, 1000, 0), 
-        col=c("lightgrey","darkgrey","black"), lwd=c(0.8,0.8,1), lty=c(1,1,1), 
-        drawlabel=c(F,F,F))
+read.csv("sampling.csv", header = TRUE) -> samp
+head(samp) # a preview of the first 6 lines of the dataset. 
+
+plot(papoue, image = TRUE, bpal = blues(100),
+	deep = c(-9000, -3000, 0), shallow = c(-3000, -10, 0),
+	step = c(1000, 1000, 0), lwd = c(0.8, 0.8, 1),
+	col = c("lightgrey", "darkgrey", "black"),
+	lty = c(1, 1, 1), drawlabel = c(FALSE, FALSE, FALSE))
+
 # add points from the sampling.csv, and add text to the plot:
-points(samp$x, samp$y, pch=21, col="black", bg="yellow", cex=1.3)
-text(152,-7.2, "New Britain\nTrench", col="white",font=3)
+points(samp$x, samp$y, pch = 21, col = "black", 
+	bg = "yellow", cex = 1.3)
+text(152, -7.2, "New Britain\nTrench", col = "white", font = 3)
 @
 
 By clicking on the map, we can select the area in the New Britain Trench, to get information on the sampling stations of that area. \verb"get.sample()" will detect that there are samples in the area selected, and return the locations relative for these samples. 
 
  \begin{verbatim}
 > # click twice on the map to delimit an area:
-> get.sample(papoue, samp, col.lon=1, col.lat=2)
+> get.sample(papoue, samp, col.lon = 1, col.lat = 2)
           x         y   station
 12 152.7475 -6.005769 station12
 13 152.5025 -6.211152 station13
@@ -167,46 +184,54 @@ We can use the depth data when plotting points:
 
 <<fig=TRUE,echo=TRUE>>=
 # make a table of fake sampling information, with fake depth
-samp.depth = sample(seq(-3000,-1000, by=50), size=16)
+samp.depth = sample(seq(-3000, -1000, by = 50), size = 16)
 data.frame(samp$x, samp$y, samp.depth) -> sp
 names(sp) <- c("lon", "lat", "depth")
 head(sp)
 
 # plot map
 par(mai=c(1,1,1,1.5))
-plot(papoue, deep=c(-4500,0), shallow=c(-50,0), step=c(500,0), 
-     lwd=c(0.3,1), lty=c(1,1), col=c("grey","black"), drawlabels=c(F,F))	
-scaleBathy(papoue, deg=3, x="bottomleft", inset=5)
+plot(papoue, deep = c(-4500, 0), shallow = c(-50, 0), step = c(500, 0), 
+	lwd = c(0.3, 1), lty = c(1, 1), col = c("grey", "black"),
+	drawlabels = c(FALSE, FALSE))	
+scaleBathy(papoue, deg = 3, x = "bottomleft", inset = 5)
 
 # set color palette	
-max(-sp$depth, na.rm=TRUE) -> mx
-colorRampPalette(c("white","lightyellow","lightgreen","blue","lightblue1","purple")) -> ramp
+max(-sp$depth, na.rm = TRUE) -> mx
+colorRampPalette(c("white", "lightyellow", "lightgreen", 
+	"blue", "lightblue1", "purple")) -> ramp
 blues <- ramp(mx)
 
 # plot points and color depth scale	
-points(sp[,1:2], col="black", bg=blues[-sp$depth], pch=21,cex=1.5)
+points(sp[,1:2], col = "black", bg = blues[-sp$depth], 
+	pch = 21, cex = 1.5)
 require(shape)
-colorlegend(zlim=c(mx,0), col=rev(blues), main="depth (m)",posx=c(0.85,0.88))
+colorlegend(zlim = c(mx, 0), col = rev(blues), main = "depth (m)",
+	posx = c(0.85, 0.88))
 @
 
 The function \verb"get.area()" can be used to calculate the projected surface area (the projecting surface being the ocean surface). For example, in the case of the Hawaiian Archipelago, we can calculate the surface area of the bathyal (1,000 to 4,000 m) and abyssal regions (4,000 to about 6,000 m). 
 
 <<fig=FALSE,echo=TRUE>>=
 data(hawaii)
-get.area(hawaii, level.inf=-4000, level.sup=-1000) -> bathyal
-get.area(hawaii, level.inf=min(hawaii), level.sup=-4000) -> abyssal
+get.area(hawaii, level.inf = -4000, level.sup = -1000) -> bathyal
+get.area(hawaii, level.inf = min(hawaii), level.sup = -4000) -> abyssal
 round(bathyal$Square.Km, 0) -> ba
 round(abyssal$Square.Km, 0) -> ab
 @ 
 
-The function \verb"get.area()" returns a surface area un square kilometers (\verb"$Square.Km"), and a matrix of zeros and ones delimiting the area of interest. The \verb"$Lon", \verb"$Lat" and \verb"$Area" objects can be used to display these areas: 
+The function \verb"get.area()" returns a surface area in square kilometers (\verb"$Square.Km"), and a matrix of zeros and ones delimiting the area of interest. The \verb"$Lon", \verb"$Lat" and \verb"$Area" objects can be used to display these areas: 
 
 <<fig=TRUE,echo=TRUE>>=
-plot(hawaii, lwd=0.2)
-image(bathyal$Lon, bathyal$Lat, bathyal$Area, col=c(rgb(0,0,0,0), rgb(.7,0,0,.3)),    add=T)
-image(abyssal$Lon, abyssal$Lat, abyssal$Area, col=c(rgb(0,0,0,0), rgb(.7,.7,0.3,.3)), add=T)
-legend(x="bottomleft",legend=c(paste("bathyal:",ba,"km2"), paste("abyssal:",ab,"km2")), 
-		col="black", pch=21, pt.bg=c(rgb(.7,0,0,.3), rgb(.7,.7,0,.3)) )
+plot(hawaii, lwd = 0.2)
+image(bathyal$Lon, bathyal$Lat, bathyal$Area, 
+	col = c("transparent", rgb(0.7, 0, 0, 0.3)), add = TRUE)
+image(abyssal$Lon, abyssal$Lat, abyssal$Area, 
+	col = c("transparent", rgb(0.7, 0.7, 0.3, 0.3)), add = TRUE)
+legend("bottomleft", 
+	legend = c(paste("bathyal:", ba, "km2"), 
+	paste("abyssal:", ab, "km2")), 
+	fill = c(rgb(0.7, 0, 0, 0.3), rgb(0.7, 0.7, 0, 0.3)))
 @
 
 \subsection{Using bathymetric data for least-cost path analysis}
@@ -226,7 +251,7 @@ We first compute a transition to be used by \verb"lc.dist" to compute least cost
 \begin{Schunk}
 \begin{Sinput}
 > trans1 <- trans.mat(hawaii)
-> trans2 <- trans.mat(hawaii,min.depth=-200)
+> trans2 <- trans.mat(hawaii, min.depth = -200)
 \end{Sinput}
 \end{Schunk}
 
@@ -234,16 +259,16 @@ We can now use these transition objects to calculate least cost distances for \v
 
 \begin{Schunk}
 \begin{Sinput}
-> out1 <- lc.dist(trans1,sites,res="path")
+> out1 <- lc.dist(trans1, sites, res = "path")
 \end{Sinput}
 \begin{Soutput}
-  |=====================================================================| 100%
+  |=================================================| 100%
 \end{Soutput}
 \begin{Sinput}
-> out2 <- lc.dist(trans2,sites,res="path")
+> out2 <- lc.dist(trans2, sites, res = "path")
 \end{Sinput}
 \begin{Soutput}
-  |=====================================================================| 100%
+  |=================================================| 100%
 \end{Soutput}
 \end{Schunk}
 
@@ -252,14 +277,17 @@ We use the \verb"lapply" function to extract information from these lists and pl
 
 \begin{Schunk}
 \begin{Sinput}
-> plot(hawaii, xlim=c(-161,-154), ylim=c(18,23), 
-+      deep=c(-5000,-200,0), shallow=c(-200,0,0), 
-+      col=c("grey","blue", "black"), step=c(1000,200, 1), 
-+      lty=c(1,1,1), lwd=c(0.6,0.6,1.2), draw=c(F,F,F))
-> points(sites,pch=21,col="blue",bg=col2alpha("blue",.9),cex=1.2)
-> text(sites[,1],sites[,2],lab=rownames(sites),pos=c(3,4,1,2),col="blue")
-> lapply(out1,lines,col="orange",lwd=5,lty=1) -> dummy
-> lapply(out2,lines,col="black",lwd=1,lty=1) -> dummy
+> plot(hawaii, xlim = c(-161, -154), ylim = c(18, 23), 
+          deep = c(-5000, -200, 0), shallow = c(-200, 0, 0), 
+          col = c("grey", "blue", "black"), step = c(1000, 200, 1), 
+          lty = c(1, 1, 1), lwd = c(0.6, 0.6, 1.2), 
+          draw=c(FALSE, FALSE, FALSE))
+> points(sites, pch = 21, col = "blue", bg = col2alpha("blue", .9),
+          cex = 1.2)
+> text(sites[,1], sites[,2], lab = rownames(sites),
+          pos = c(3, 4, 1, 2), col = "blue")
+> lapply(out1, lines, col = "orange", lwd = 5, lty = 1) -> dummy
+> lapply(out2, lines, col = "black", lwd = 1, lty = 1) -> dummy
 \end{Sinput}
 \end{Schunk}
 \includegraphics{lc.pdf}
@@ -270,8 +298,8 @@ The option \verb"res" of \verb"lc.dist" controls whether path coordinates or dis
 \begin{Sinput}
 > library(fossil)
 > dist0 <- round(earth.dist(sites), 0)
-> dist1 <- lc.dist(trans1,sites,res="dist")
-> dist2 <- lc.dist(trans2,sites,res="dist")
+> dist1 <- lc.dist(trans1, sites, res = "dist")
+> dist2 <- lc.dist(trans2, sites, res = "dist")
 > dist0
 \end{Sinput}
 \begin{Soutput}
@@ -315,7 +343,7 @@ R contains tools to plot data in three dimensions. We can use the function \verb
 data(nw.atlantic)
 atl <- as.bathy(nw.atlantic)
 library(lattice)
-wireframe(unclass(atl), shade=T, aspect=c(1/2, 0.1))
+wireframe(unclass(atl), shade = TRUE, aspect = c(1/2, 0.1))
 \end{verbatim}
 \includegraphics[width=\textwidth]{3d.pdf}
 
@@ -323,21 +351,21 @@ The \verb"marmap" function \verb"get.box()" can be coupled with the \verb"lattic
 
 <<fig=TRUE,echo=TRUE>>=
 data(nw.atlantic) ; atl <- as.bathy(nw.atlantic)
-plot(atl, xlim=c(-70,-52), 
-        deep=c(-5000, 0), shallow=c(0,0), step=c(1000,0), 
-        col=c("lightgrey","black"), lwd=c(0.8, 1), lty=c(1,1), draw=c(F,F))
+plot(atl, xlim = c(-70, -52), 
+	deep = c(-5000, 0), shallow = c(0, 0), step = c(1000, 0), 
+	col = c("lightgrey", "black"), lwd = c(0.8, 1), 
+	lty = c(1, 1), draw = c(FALSE, FALSE))
         
-get.box(atl,
-              x1=-68.6, x2=-53.7, y1=42.4, y2=32.5, 
-              width=3, col="red") -> out
+get.box(atl, x1 = -68.6, x2 = -53.7, y1 = 42.4, y2 = 32.5, 
+	width = 3, col = "red") -> out
 @
 <<fig=TRUE,echo=TRUE>>=
 library(lattice)             
-wireframe(out, shade=T, zoom=1.1,
-                  aspect=c(1/4, 0.1), 
-                  screen = list(z = -60, x = -55), 
-                  par.settings = list(axis.line = list(col = "transparent")),
-                  par.box = c(col = rgb(0,0,0,0.1)))
+wireframe(out, shade = TRUE, zoom = 1.1,
+	aspect = c(1/4, 0.1), 
+	screen = list(z = -60, x = -55), 
+	par.settings = list(axis.line = list(col = "transparent")),
+	par.box = c(col = rgb(0, 0, 0, 0.1)))
 @
 
 \section{Data import and export strategies in marmap}
@@ -346,25 +374,30 @@ wireframe(out, shade=T, zoom=1.1,
 
 \verb"getNOAA.bathy()" is the easiest way to load data into R, but it depends on the NOAA download protocol, and one must have an internet connection. The way to use this function is demonstrated in the tutorial above. \verb"read.bathy()" allows import of data into R, and this data can be located on a drive ; an internet connection is therefore not mandatory. This is a good way to import data that have been saved locally on your drive, and may be faster than re-downloading data from the NOAA server at the beginning of each R session. If the user is building maps routinely, we propose two functions to create a local database that can be accessed from within R. These functions are \verb"setSQL()" and \verb"subsetSQL()". \\
 
-\small
-\begin{tabular}{|l|p{3cm}|p{3cm}|p{3cm}|l|}
-\hline 
-{\bf Function} &  {\bf Job} & {\bf Input} & {\bf Output} & {\bf Internet} \\
-\hline
-\verb"getNOAA.bathy()" & downloads data from NOAA server & coordinates of bounding box and resolution & data matrix of class bathy &        yes \\
-\hline
-\verb"read.bathy()" & imports data into R & name of external file with xyz data & data matrix of class bathy &         no \\
-\hline
-\verb"setSQL()" & creates a local SQL database of bathymetric data & name of external file with xyz data & an SQL database &         no \\
-\hline
-\verb"subsetSQL()" & queries a local SQL database & coordinates of bounding box and resolution & data matrix of class bathy &         no \\
-\hline
-\verb"as.xyz()" & converts a dataset of class bathy into an xyz table & dataset of class bathy (an R object) & an xyz table (an R object) &         no \\
-\hline
-\verb"as.bathy()" & converts an xyz table into an dataset of class bathy & an xyz table (an R object) & dataset of class bathy (an R object) &         no \\
-\hline
-\end{tabular}
-
+\begin{table}
+\begin{adjustwidth}{-1in}{-1in}% adjust the L and R margins by 1 inch
+	\begin{center}
+		\small
+		\begin{tabular}{|l|p{3cm}|p{3cm}|p{3cm}|l|}
+		\hline 
+		{\bf Function} &  {\bf Job} & {\bf Input} & {\bf Output} & {\bf Internet} \\
+		\hline
+		\verb"getNOAA.bathy()" & downloads data from NOAA server & coordinates of bounding box and resolution & data matrix of class bathy &        yes \\
+		\hline
+		\verb"read.bathy()" & imports data into R & name of external file with xyz data & data matrix of class bathy &         no \\
+		\hline
+		\verb"setSQL()" & creates a local SQL database of bathymetric data & name of external file with xyz data & an SQL database &         no \\
+		\hline
+		\verb"subsetSQL()" & queries a local SQL database & coordinates of bounding box and resolution & data matrix of class bathy &         no \\
+		\hline
+		\verb"as.xyz()" & converts a dataset of class bathy into an xyz table & dataset of class bathy (an R object) & an xyz table (an R object) &         no \\
+		\hline
+		\verb"as.bathy()" & converts an xyz table into an dataset of class bathy & an xyz table (an R object) & dataset of class bathy (an R object) &         no \\
+		\hline
+		\end{tabular}
+	\end{center}
+\end{adjustwidth}
+\end{table}
 
 
 \subsection{Getting bathymetric data from NOAA: read.bathy()}
@@ -381,7 +414,7 @@ Launch R. Navigate to your work folder (for example, with \verb"setwd()"). Then 
 
 <<fig=FALSE,echo=TRUE>>=
 library(marmap)
-read.bathy('png.xyz', header=F, sep="\t") -> papoue
+read.bathy('png.xyz', header = FALSE, sep = "\t") -> papoue
 summary(papoue)
 @
 
@@ -392,13 +425,14 @@ summary(papoue)
 Use a local file with xyz data (we can re-use the png.xyz that we created above for use with \verb"read.bathy()"), and submit it to \verb"setSQL()". Make sure that no file called \verb"bathy_db" is present in your working directory. Also, make sure that the package \verb"RSQLite" (James and Falcon 2012) is installed and properly working. 
 
 <<fig=FALSE,echo=TRUE>>=
-setSQL(bathy="png.xyz", sep="\t")
+setSQL(bathy = "png.xyz", sep = "\t")
 @ 
 
 This will created a file \verb"bathy_db" in your directory, which size is about the size of (or larger than) your original data. If you want to create a database for frequent use, you just need to do this once. \verb"subsetSQL()" will know where to get the data in future R sessions. If \verb"setSQL()" worked properly, it will return \verb"TRUE". If there is a problem (e.g. database connection already open, database file already created ...) it will return \verb"FALSE".  Lets query a subset of the png dataset, and check that it is indeed what we asked for with the \verb"summary.bathy()" function:
 
 <<fig=FALSE,echo=TRUE>>=
-subsetSQL(min_lon=145,max_lon=150, min_lat=-2, max_lat=0) -> test
+subsetSQL(min_lon = 145, max_lon = 150,
+	 min_lat = -2, max_lat = 0) -> test
 summary(test)
 @
 
@@ -407,6 +441,39 @@ Finally, if you are done with the SQL dataset, you can remove it with
 <<fig=FALSE,echo=TRUE>>=
 system("rm bathy_db")
 @
+
+\section{Miscellaneous}
+\subsection{Interactions with other packages}
+
+\verb"marmap" interacts with multiple existing R packages for visualization and analysis, such as \verb"lattice" for building three-dimensional plots, and \verb"gdistance" for least-cost path calculations (see above). \verb"marmap" also contains functions to ease interactions with other packages dedicated to the analysis of spatial data. Data from class \verb"bathy" can be transformed into \verb"RasterLayer" objets for use in the \verb"raster" package \cite{Etten2012a} or into \verb"SpatialGridDataFrame" objects for use in the packages \verb"sp" \cite{Edzer2005,Bivand2008}. The full range of spatial analyses implemented in packages taking advantage of these classes are thus available for bathymetric data. The simple example presented below illustrate how to apply an arbitrary projection to \verb"bathy" objects using the function \verb"projectRaster" from the \verb"raster" package (n.b. a working installation of the \verb"rgdal" package is needed to use this function).
+
+\begin{Schunk}
+\begin{Sinput}
+# Loads data of class bathy
+> data(hawaii)
+
+# Creates an object of class raster
+> r1 <- as.raster(hawaii)
+
+# Defines the target projection
+> newproj <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
+
+# Creates a new projected raster object
+> r2 <- projectRaster(r1,crs=newproj)
+
+# Switches back to a bathy object
+> hawaii.projected <- as.bathy(r2)
+
+# Plots both the original and projected bathy objects
+> plot(hawaii, image = TRUE, lwd = 0.3)
+> plot(hawaii.projected, image = TRUE, lwd = 0.3, 
+       xlab = "", ylab = "", axes = FALSE)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{hawaii1.pdf}\\
+
+\includegraphics{hawaii2.pdf}
+
 
 \begin{thebibliography}{24}
 \providecommand{\natexlab}[1]{#1}
@@ -417,6 +484,10 @@ system("rm bathy_db")
 Amante C, Eakins BW (2009) Etopo1 1 arc-minute global relief model: Procedures,
   data sources and analysis.
 \newblock NOAA Technical Memorandum NESDIS NGDC-24 : 1-19.
+
+\bibitem{Bivand2008}
+Bivand RS, Pebesma EJ, Gomez-Rubio V (2008) {Applied spatial data analysis with R}. 
+\newblock Springer, NY. 
 
 \bibitem{Chessel2004}
 Chessel D, Dufour A, Thioulouse J (2004) {The ade4 package -I- One-table
@@ -453,6 +524,10 @@ van Etten J (2012) {gdistance: Distances and routes on geographical grids}.
 \newblock {GEODAS Grid Translator - Design a grid}.
 \newblock \urlprefix\url{http://www.ngdc.noaa.gov/mgg/gdas/gd\textunderscore
   designagrid.html}.
+
+\bibitem{Edzer2005}
+Pebesma EJ, Bivand RS (2005) {Classes and methods for spatial data in R}.
+\newblock R News. 5:9-13.
 
 \bibitem{RSQLite}
 James DA, Falcon S (2012) {RSQLite: SQLite interface for R}.

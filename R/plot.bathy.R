@@ -24,7 +24,7 @@ plot.bathy <- function(x, image=FALSE, bpal=NULL, land=FALSE, deepest.isobath, s
 			if (!missing("deepest.isobath") | !missing("shallowest.isobath") | !missing("step")) {
 				seq(deepest.isobath, shallowest.isobath, by=step) -> level.param
 			} else {
-				level.param <- pretty(range(mat),n=n)
+				level.param <- pretty(range(mat,na.rm=TRUE),n=n)
 			}
 			contour(lon,lat,mat, levels=level.param, 
 					lwd=lwd, lty=lty, col=col, drawlabels = drawlabels, 
@@ -51,7 +51,7 @@ plot.bathy <- function(x, image=FALSE, bpal=NULL, land=FALSE, deepest.isobath, s
 			if (!missing("deepest.isobath") | !missing("shallowest.isobath") | !missing("step")) {
 				seq(deepest.isobath, shallowest.isobath, by=step) -> level.param
 			} else {
-				level.param <- pretty(range(mat),n=n)
+				level.param <- pretty(range(mat,na.rm=TRUE),n=n)
 			}
 			image(lon,lat,mat, col=bpal, xlab=xlab, ylab=ylab, asp=asp, ...)
 			contour(lon,lat,mat, levels=level.param, 

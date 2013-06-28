@@ -31,9 +31,12 @@ atl <- as.bathy(nw.atlantic)
 ## - isobaths between 4000-500 in dark grey (to emphasize seamounts)
 
 plot(atl, deep=c(-8000,-4000), shallow=c(-4000,-500), step=c(500,500), 
- 	 lwd=c(0.5,0.5,1.5),lty=c(1,1,1),col=c("grey80", "grey20", "blue"),drawlabels=c(FALSE,FALSE,FALSE) )
+ 	 lwd=c(0.5,0.5,1.5),lty=c(1,1,1),
+ 	 col=c("grey80", "grey20", "blue"), 
+ 	 drawlabels=c(FALSE,FALSE,FALSE) )
  	 
-## the coastline can be added from a different source, and can therefore have a different resolution:
+## the coastline can be added from a different source, 
+## and can therefore have a different resolution:
 lines(nw.atlantic.coast)
 
 ## add a geographical reference on the coast:

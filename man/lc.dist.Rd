@@ -39,7 +39,8 @@ Benoit Simon-Bouhet
 # Load and plot bathymetry
 	data(hawaii)
 	pal <- colorRampPalette(c("black","darkblue","blue","lightblue"))
-	plot(hawaii,image=TRUE,bpal=pal(100),asp=1,col="grey40",lwd=.7,main="Bathymetric map of Hawaii")
+	plot(hawaii,image=TRUE,bpal=pal(100),asp=1,col="grey40",lwd=.7,
+	     main="Bathymetric map of Hawaii")
 
 # Load and plot several locations
 	data(hawaii.sites)
@@ -52,7 +53,8 @@ Benoit Simon-Bouhet
 # Compute transition object with no depth constraint
 	trans1 <- trans.mat(hawaii)
 
-# Compute transition object with minimum depth constraint: path impossible in waters shallower than -200 meters depth
+# Compute transition object with minimum depth constraint: 
+# path impossible in waters shallower than -200 meters depth
 	trans2 <- trans.mat(hawaii,min.depth=-200)
 
 # Computes least cost distances for both transition matrix and plots the results on the map
@@ -70,7 +72,9 @@ Benoit Simon-Bouhet
 # plots the depth profile between location 1 and 3 in the two situations
 	dev.new()
 	par(mfrow=c(2,1))
-	path.profile(out1[[2]],hawaii,pl=TRUE,main="Path between locations 1 and 3\nProfile with no depth constraint")
-	path.profile(out2[[2]],hawaii,pl=TRUE,main="Path between locations 1 and 3\nProfile with minimum depth set to -200m")
+	path.profile(out1[[2]],hawaii,pl=TRUE,
+                 main="Path between locations 1 & 3\nProfile with no depth constraint")
+	path.profile(out2[[2]],hawaii,pl=TRUE,
+                 main="Path between locations 1 & 3\nProfile with min depth set to -200m")
 }
 }

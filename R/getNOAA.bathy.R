@@ -1,5 +1,5 @@
 getNOAA.bathy <-
-function(lon1,lon2,lat1,lat2, resolution = 4){
+function(lon1,lon2,lat1,lat2, resolution = 4, keep=FALSE){
 	
 	x1=x2=y1=y2 = NULL
 	
@@ -8,6 +8,14 @@ function(lon1,lon2,lat1,lat2, resolution = 4){
 	
 	res = resolution * 0.016666666666666667
 	
+	paste("marmap_coord_",x1,":",y1,":",x2,":",y2,"_res_",resolution,".csv", sep="") -> FILE
+	
+	if(FILE %in% list.files() ) {
+		cat("File already exists ; loading \'", FILE,"\'", sep="")
+		read.bathy(FILE, header=T) -> exisiting.bathy
+		return(exisiting.bathy)
+	} else {
+
 	# ## Estimate download time: 
 	# abs(x2-x1) * abs(y2-1) * res -> size.matrix
 	# ETA = exp(-1.3983 * log(size.matrix) + 7.8788)
@@ -20,7 +28,12 @@ function(lon1,lon2,lat1,lat2, resolution = 4){
 	read.table(WEB.REQUEST) -> bath	
 	
 	cat("Building bathy matrix ...\n")	
-	as.bathy(bath) -> bath
-	return(bath)
+	as.bathy(bath) -> bath2
 	
+	if(keep==TRUE){
+		write.table(bath, file=FILE, sep=",", quote=FALSE, row.names=FALSE)
+	} # close if keep==TRUE statement
+	return(bath2)
+
+	} # close else statement
 }

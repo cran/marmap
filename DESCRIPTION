@@ -1,15 +1,15 @@
 Package: marmap
 Type: Package
 Title: Import, plot and analyze bathymetric and topographic data
-Version: 0.5
-Date: 2013-02-16
+Version: 0.6
+Date: 2013-06-28
 Author: Eric Pante and Benoit Simon-Bouhet
 Maintainer: Eric Pante <pante.eric@gmail.com>
-Depends: R (>= 2.10), RSQLite, gdistance, geosphere
+Depends: R (>= 2.10), RSQLite, gdistance, geosphere, sp, raster
 Suggests: maps, mapdata, shape, lattice
 Description: Import, plot and analyze bathymetric and topographic data
-License: GPL (>= 2)
-Packaged: 2013-04-03 12:18:50 UTC; Benoit
+License: GPL (>= 3)
+Packaged: 2013-07-12 07:07:03 UTC; Benoit
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-04-03 16:15:36
+Date/Publication: 2013-07-12 09:57:46
