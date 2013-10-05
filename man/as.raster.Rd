@@ -42,7 +42,10 @@ summary(r.hawaii)
 # structure of the RasterLayer object
 str(r.hawaii)
 
+\dontrun{
 # Plots
+#require(raster)
 plot(hawaii,image=TRUE,lwd=.2)
 plot(r.hawaii)
+}
 }

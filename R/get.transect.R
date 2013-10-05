@@ -1,7 +1,5 @@
 get.transect = function(mat, x1, y1, x2, y2, locator=FALSE, distance=FALSE,...){
 
-### TO DO : check hemispheres... check precision...
-	
 	as.numeric(rownames(mat)) -> lon
 	as.numeric(colnames(mat)) -> lat
 
@@ -32,7 +30,7 @@ get.transect = function(mat, x1, y1, x2, y2, locator=FALSE, distance=FALSE,...){
 		depth <- diag.bathy(new.bathy)
 	}
 
-## check (and fix if needed) dimentions of new matrix: I don't understand the purpose of the next 4 lines
+## check (and fix if needed) dimentions of new matrix
 	as.numeric(colnames(new.bathy)) -> lon
 	as.numeric(rownames(new.bathy)) -> lat
 

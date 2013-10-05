@@ -42,12 +42,16 @@ In this section, we will produce a bathymetric maps of Papua New Guinea, Hawaii 
 
 \subsection{Getting data into R}
 
-Launch R. Navigate to your work folder (for example, with \verb"setwd()"). Then launch the marmap  package.  The simplest way to get bathymetric data into R for use with \verb"marmap" is to use the \verb"getNOAA.bathy()" function. It queries the ETOPO1 dataset (Armante and Eakins 2009) hosted on the NOAA server, based on coordinate a resolution given by the user. In one line, we can get the data into R and start plotting: 
+Launch R. Navigate to your work folder (for example, with \verb"setwd()"). Then launch the marmap  package.  The simplest way to get bathymetric data into R for use with \verb"marmap" is to use the \verb"getNOAA.bathy()" function. It queries the ETOPO1 dataset (Armante and Eakins 2009) hosted on the NOAA server, based on coordinate a resolution given by the user (please note that this function depends on the availability of the NOAA server!). In one line, we can get the data into R and start plotting: 
 
-<<echo=TRUE>>=
+<<eval=FALSE,echo=TRUE>>=
 library(marmap)
 getNOAA.bathy(lon1 = 140, lon2 = 155, lat1 = -13, lat2 = 0, 
 	resolution = 10) -> papoue
+summary(papoue)
+@
+
+<<echo=FALSE>>=
 summary(papoue)
 @
 
@@ -368,6 +372,49 @@ wireframe(out, shade = TRUE, zoom = 1.1,
 	par.box = c(col = rgb(0, 0, 0, 0.1)))
 @
 
+\subsection{Preparing maps in the Pacific antimeridian region}
+
+The antimeridian (or antemeridian) is the 180th meridian and is located about in the middle of the Pacific Ocean, east of New Zealand and Fidji, west of Hawaii and Tonga. If you want to prepare a map of the Aleutian islands (Alaska), your latitude values may, for example, go from 165 to 180 degrees East, and 180 to 165 degrees West. Crossing the antemeridian means that you will need to download data for the eastern (165 to 180) and the western (-180 to -165) portions of the area of interest (for example, GEBCO will tell you ``The Westernmost is more Easterly than the Easternmost. Please amend your search query'' if you try to download data for the Aleutians in one step). We are currently working on a version of \verb;getNOAA.bathy(); that takes care of this issue. In the mean time, here is how you can prepare maps from this region: 
+
+First, download data from NOAA, for the Aleutian Islands. 
+
+\begin{Schunk}
+\begin{Sinput}
+> getNOAA.bathy(lon1=153,  lon2=180,  lat1=-8, lat2=-25, 
+      resolution=10, keep=T) -> a
+> getNOAA.bathy(lon1=-180, lon2=-170, lat1=-8, lat2=-25, 
+      resolution=10, keep=T) -> b
+\end{Sinput}
+\end{Schunk}
+
+Second, we need to assemble these two matrices into one and change the coordinate system. Here instead of going from 153 to 180 and -180 to -170, we are going to go from 153 to $(-170)+360 = 190$. When merging the two datasets, we need to bear in mind that the antemeridian may be present in each dataset. We therefore use the function \verb;unique(); to remove the duplicated row. 
+
+\begin{Schunk}
+\begin{Sinput}
+as.numeric(rownames(b))+360 -> rownames(b)  # new coordinate system
+rbind(a,b) -> c                 # collate the two matrices into one
+c[unique(rownames(c)), ]->c    # remove the extra antimeridian line
+class(c)<-"bathy"          # assign the class bathy to new matrix c
+\end{Sinput}
+\end{Schunk}
+
+The new matrix is now ready to be utilized. Simply using \verb;plot.bathy(); will reveal the custom coordinate system: 
+
+\begin{Schunk}
+\begin{Sinput}
+plot(c, image=T, n=10, lwd=0.5)
+\end{Sinput}
+\end{Schunk}
+
+We therefore use the argument \verb;axes = FALSE; and re-draw both the plot box and the axes. Only axis 2 (the longitudes) need to be modified. If you need to add anything to this plot (e.g. points, segments, etc...), remember that the new coordinate system requires that 360 be added to the original longitudes. 
+
+\begin{Schunk}
+\begin{Sinput}
+plot(c, image=T, n=10, lwd=0.5, axes=F)
+box(); axis(2)
+axis(1, at=seq(160,240, by=20), labels=c(seq(160,180, by=20),seq(-160,-120, by=20)))\end{Sinput}
+\end{Schunk}
+
 \section{Data import and export strategies in marmap}
 
 \subsection{Overview of the different import and export strategies available in marmap}
@@ -384,6 +431,8 @@ wireframe(out, shade = TRUE, zoom = 1.1,
 		\hline
 		\verb"getNOAA.bathy()" & downloads data from NOAA server & coordinates of bounding box and resolution & data matrix of class bathy &        yes \\
 		\hline
+		\verb"readGEBCO.bathy()" & imports data from GEBCO file & name of external file in netCDF format & data matrix of class bathy &        no \\
+		\hline
 		\verb"read.bathy()" & imports data into R & name of external file with xyz data & data matrix of class bathy &         no \\
 		\hline
 		\verb"setSQL()" & creates a local SQL database of bathymetric data & name of external file with xyz data & an SQL database &         no \\
@@ -399,8 +448,33 @@ wireframe(out, shade = TRUE, zoom = 1.1,
 \end{adjustwidth}
 \end{table}
 
+\subsection{Importing bathymetric data from GEBCO: readGEBCO.bathy()}
 
-\subsection{Getting bathymetric data from NOAA: read.bathy()}
+\verb"readGEBCO.bathy()" provides a data source alternative to the NOAA-hosted ETOPO1 data. The GEBCO data, hosted on the British Oceanographic Data Center server, is available at the 30 second and 1 minute resolutions. Both types can be imported using \verb;readGEBCO.bathy();, using the \verb;ncdf; package to load netCDF data into R. The argument \verb;db; specifies whether data was downloaded from the 30 arcseconds database (GEBCO\_08) or the 1 arcminute database (GEBCO\_1min, the default). A third database type, GEBCO\_08 SID, is available from the website. This database contains a Source IDentifier (SID) specifying which grid cells have depth information based on soundings; it does not contain bathymetry or topography data. \verb;readGEBCO.bathy; can read this type of database with \verb;db = "GEBCO_08";, and only the SID information will be included in the object of class \verb;bathy;. Therefore, to display a map with both the bathymetry and the SID information, you will have to download both datasets from GEBCO, and import and plot both independently. Here is an example for the region of the Mediterranean Sea including Corsica and Sardinia:
+
+\begin{Schunk}
+\begin{Sinput}
+> readGEBCO.bathy("gebco_08_7_38_10_43_corsica.nc", db="GEBCO_08") -> med 
+> summary(med)     # the bathymetry data
+
+> readGEBCO.bathy("gebco_SID_7_38_10_43_corsica.nc", db="GEBCO_08")-> sid
+> summary(sid)     # the SID data
+
+# a pretty custom color palette
+> colorRampPalette(c("lightblue","cadetblue2","cadetblue1","white")) -> blues 
+
+# a first plot for bathymetry
+> plot(med, n=1, im=T, bpal=blues(100), 
+      main="Corsica & Sardinia bathymetry\n GEODAS 08 & SID datasets") 
+# a second layer with the SID data
+> contour(as.numeric(rownames(sid)), as.numeric(colnames(sid)), sid, 
+      drawlabels=F, lwd=.1, add=T)
+\end{Sinput}
+\end{Schunk}
+
+The argument \verb;resolution; specifies the resolution of the object of class \verb;bathy;. Because the resolution of GEBCO data is rather fine, we offer the possibility of downsizing the dataset with \verb;resolution;. \verb;resolution; is in units of the selected database: in "GEBCO\_1min", \verb;resolution; is in minutes; in "GEBCO\_08", \verb;resolution; is in 30 arcseconds (that is, \verb;resolution = 3; corresponds to 3x30sec, or 1.5 arcminute).
+
+\subsection{Getting bathymetric data from an xyz file: read.bathy()}
 
 \verb"read.bathy()" will read xyz data from any source. Here, we will get ETOPO1 data hosted on the NOAA GEODAS server (NOAA National Geophysical Data Center 2013). To get the data, use the following link: \\
 
@@ -425,6 +499,7 @@ summary(papoue)
 Use a local file with xyz data (we can re-use the png.xyz that we created above for use with \verb"read.bathy()"), and submit it to \verb"setSQL()". Make sure that no file called \verb"bathy_db" is present in your working directory. Also, make sure that the package \verb"RSQLite" (James and Falcon 2012) is installed and properly working. 
 
 <<fig=FALSE,echo=TRUE>>=
+require(RSQLite)
 setSQL(bathy = "png.xyz", sep = "\t")
 @ 
 

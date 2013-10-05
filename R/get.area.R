@@ -1,6 +1,6 @@
 get.area <- function(mat, level.inf, level.sup=0, xlim=NULL, ylim=NULL) {
 	
-	require(geosphere)
+	# require(geosphere)
 	
 	if (class(mat)!="bathy") stop("mat must be of class bathy")
 	
@@ -35,7 +35,7 @@ get.area <- function(mat, level.inf, level.sup=0, xlim=NULL, ylim=NULL) {
 							c(cells[i]*cell.width,c.lat[i])
 							)
 	
-	surf <- sum(sapply(poly,areaPolygon,r=6371))
+	surf <- sum(sapply(poly,geosphere::areaPolygon,r=6371))
 	return <- list(Square.Km=surf, Area=bathy2, Lon=lon, Lat=lat)
 	
 }

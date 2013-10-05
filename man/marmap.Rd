@@ -12,8 +12,8 @@ Import, plot and analyze bathymetric and topographic data
 \tabular{ll}{
 Package: \tab marmap\cr
 Type: \tab Package\cr
-Version: \tab 0.5\cr
-Date: \tab 2013-02-16\cr
+Version: \tab 0.7\cr
+Date: \tab 2013-10-05\cr
 }
 Import, plot and analyze bathymetric and topographic data
 }

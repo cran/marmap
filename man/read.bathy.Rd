@@ -1,7 +1,7 @@
 \name{read.bathy}
 \alias{read.bathy}
 \title{
-Reading bathymetric data in XYZ format
+Read bathymetric data in XYZ format
 }
 \description{
 Reads a three-column table containing longitude (x), latitude (y) and depth (z) data. 
@@ -30,7 +30,7 @@ The output of \code{read.bathy} is a matrix of class \code{bathy}, which dimensi
 Eric Pante
 }
 \seealso{
-\code{\link{summary.bathy}}, \code{\link{plot.bathy}}
+\code{\link{summary.bathy}}, \code{\link{plot.bathy}}, \code{\link{readGEBCO.bathy}}
 }
 \examples{
 # load NW Atlantic data

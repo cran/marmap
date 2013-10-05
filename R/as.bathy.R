@@ -1,11 +1,11 @@
 as.bathy <- function(x){
 
-	require(raster)
+	# require(raster)
 	# require(sp)
 
 	if (is(x,"bathy")) stop("Object is already of class 'bathy'")
 
-	if (is(x,"SpatialGridDataFrame")) x <- raster(x)
+	if (is(x,"SpatialGridDataFrame")) x <- raster::raster(x)
 
 	# if x is a RasterLayer do this
 	if (is(x,"RasterLayer")) {
@@ -20,7 +20,7 @@ as.bathy <- function(x){
 		lon <- seq(lon.min, lon.max, length.out = nlon)
 		lat <- seq(lat.min, lat.max, length.out = nlat)
 		
-		bathy <- t(raster::as.matrix(flip(x,direction="y")))
+		bathy <- t(raster::as.matrix(raster::flip(x,direction="y")))
 		colnames(bathy) <- lon
 		rownames(bathy) <- lat
 	}

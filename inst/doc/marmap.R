@@ -11,23 +11,29 @@ read.bathy('png.xyz', header=F, sep="\t") -> papoue
 
 
 ###################################################
-### code chunk number 2: marmap.Rnw:47-51
+### code chunk number 2: marmap.Rnw:47-51 (eval = FALSE)
 ###################################################
-library(marmap)
-getNOAA.bathy(lon1 = 140, lon2 = 155, lat1 = -13, lat2 = 0, 
-	resolution = 10) -> papoue
+## library(marmap)
+## getNOAA.bathy(lon1 = 140, lon2 = 155, lat1 = -13, lat2 = 0, 
+## 	resolution = 10) -> papoue
+## summary(papoue)
+
+
+###################################################
+### code chunk number 3: marmap.Rnw:54-55
+###################################################
 summary(papoue)
 
 
 ###################################################
-### code chunk number 3: marmap.Rnw:60-61
+### code chunk number 4: marmap.Rnw:64-65
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue)
 
 
 ###################################################
-### code chunk number 4: marmap.Rnw:66-68
+### code chunk number 5: marmap.Rnw:70-72
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue, image = TRUE)
@@ -35,7 +41,7 @@ scaleBathy(papoue, deg = 2, x = "bottomleft", inset = 5)
 
 
 ###################################################
-### code chunk number 5: marmap.Rnw:73-76
+### code chunk number 6: marmap.Rnw:77-80
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 colorRampPalette(c("red","purple","blue","cadetblue1",
@@ -44,7 +50,7 @@ plot(papoue, image = TRUE, bpal = blues(100))
 
 
 ###################################################
-### code chunk number 6: marmap.Rnw:81-86
+### code chunk number 7: marmap.Rnw:85-90
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue, image = TRUE, bpal = blues(100),
@@ -55,13 +61,13 @@ plot(papoue, image = TRUE, bpal = blues(100),
 
 
 ###################################################
-### code chunk number 7: marmap.Rnw:93-94
+### code chunk number 8: marmap.Rnw:97-98
 ###################################################
 get.transect(papoue, 151, -6, 153, -7, distance = TRUE)
 
 
 ###################################################
-### code chunk number 8: marmap.Rnw:100-103
+### code chunk number 9: marmap.Rnw:104-107
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 get.transect(papoue, 151, -6, 153, -7, 
@@ -70,7 +76,7 @@ plotProfile(transect)
 
 
 ###################################################
-### code chunk number 9: marmap.Rnw:136-149
+### code chunk number 10: marmap.Rnw:140-153
 ###################################################
 x = c(142.1390, 142.9593, 144.0466, 145.9141,
       145.9372, 146.0115, 145.9141, 146.8589,
@@ -88,7 +94,7 @@ write.table(sampling, "sampling.csv", sep = ",",
 
 
 ###################################################
-### code chunk number 10: marmap.Rnw:154-167
+### code chunk number 11: marmap.Rnw:158-171
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 read.csv("sampling.csv", header = TRUE) -> samp
@@ -107,7 +113,7 @@ text(152, -7.2, "New Britain\nTrench", col = "white", font = 3)
 
 
 ###################################################
-### code chunk number 11: marmap.Rnw:185-210
+### code chunk number 12: marmap.Rnw:189-214
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # make a table of fake sampling information, with fake depth
@@ -138,7 +144,7 @@ colorlegend(zlim = c(mx, 0), col = rev(blues), main = "depth (m)",
 
 
 ###################################################
-### code chunk number 12: marmap.Rnw:215-220
+### code chunk number 13: marmap.Rnw:219-224
 ###################################################
 data(hawaii)
 get.area(hawaii, level.inf = -4000, level.sup = -1000) -> bathyal
@@ -148,7 +154,7 @@ round(abyssal$Square.Km, 0) -> ab
 
 
 ###################################################
-### code chunk number 13: marmap.Rnw:225-234
+### code chunk number 14: marmap.Rnw:229-238
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(hawaii, lwd = 0.2)
@@ -163,7 +169,7 @@ legend("bottomleft",
 
 
 ###################################################
-### code chunk number 14: marmap.Rnw:241-244
+### code chunk number 15: marmap.Rnw:245-248
 ###################################################
 data(hawaii, hawaii.sites)
 sites <- hawaii.sites[-c(1,4),]
@@ -171,7 +177,7 @@ rownames(sites) <- 1:4
 
 
 ###################################################
-### code chunk number 15: marmap.Rnw:352-360
+### code chunk number 16: marmap.Rnw:356-364
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 data(nw.atlantic) ; atl <- as.bathy(nw.atlantic)
@@ -185,7 +191,7 @@ get.box(atl, x1 = -68.6, x2 = -53.7, y1 = 42.4, y2 = 32.5,
 
 
 ###################################################
-### code chunk number 16: marmap.Rnw:362-368
+### code chunk number 17: marmap.Rnw:366-372
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 library(lattice)             
@@ -197,7 +203,7 @@ wireframe(out, shade = TRUE, zoom = 1.1,
 
 
 ###################################################
-### code chunk number 17: marmap.Rnw:415-418
+### code chunk number 18: marmap.Rnw:489-492
 ###################################################
 library(marmap)
 read.bathy('png.xyz', header = FALSE, sep = "\t") -> papoue
@@ -205,13 +211,14 @@ summary(papoue)
 
 
 ###################################################
-### code chunk number 18: marmap.Rnw:427-428
+### code chunk number 19: marmap.Rnw:501-503
 ###################################################
+require(RSQLite)
 setSQL(bathy = "png.xyz", sep = "\t")
 
 
 ###################################################
-### code chunk number 19: marmap.Rnw:433-436
+### code chunk number 20: marmap.Rnw:508-511
 ###################################################
 subsetSQL(min_lon = 145, max_lon = 150,
 	 min_lat = -2, max_lat = 0) -> test
@@ -219,7 +226,7 @@ summary(test)
 
 
 ###################################################
-### code chunk number 20: marmap.Rnw:441-442
+### code chunk number 21: marmap.Rnw:516-517
 ###################################################
 system("rm bathy_db")
 

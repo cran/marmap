@@ -1,9 +1,10 @@
 lc.dist <- function(trans,loc,res=c("dist","path")) {
 	
-	require(gdistance)
+	# require(gdistance)
+	# require(sp)
 	
 	if (res=="dist") {
-		cost <- costDistance(trans,as.matrix(loc))/1000
+		cost <- gdistance::costDistance(trans,as.matrix(loc))/1000
 		return(round(cost))
 	}
 	
@@ -14,10 +15,10 @@ lc.dist <- function(trans,loc,res=c("dist","path")) {
 		pb <- txtProgressBar(min = 0, max = ncol(comb), style = 3)
 
 		for (i in 1:ncol(comb)) {
-			origin <- SpatialPoints(loc[comb[1,i],])
-			goal <- SpatialPoints(loc[comb[2,i],])
+			origin <- sp::SpatialPoints(loc[comb[1,i],])
+			goal <- sp::SpatialPoints(loc[comb[2,i],])
 			
-			temp <- shortestPath(trans,origin,goal,output="SpatialLines")
+			temp <- gdistance::shortestPath(trans,origin,goal,output="SpatialLines")
 			path[[i]] <- temp@lines[[1]]@Lines[[1]]@coords
 			
 			setTxtProgressBar(pb, i)

@@ -41,7 +41,7 @@ Amante, C. and B. W. Eakins, ETOPO1 1 Arc-Minute Global Relief Model: Procedures
 Eric Pante
 }
 \seealso{
-\code{\link{read.bathy}}, \code{\link{plot.bathy}}
+\code{\link{read.bathy}}, \code{\link{readGEBCO.bathy}}, \code{\link{plot.bathy}}
 }
 \examples{
 \dontrun{

@@ -34,6 +34,7 @@ see \url{http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html}
 	class(hawaii)
 	summary(hawaii)
 
+\dontrun{
 ## use of plot.bathy to produce a bathymetric map
 # creation of a color palette
 	pal <- colorRampPalette(c("black","darkblue","blue","lightblue"))
@@ -47,5 +48,5 @@ see \url{http://www.ngdc.noaa.gov/mgg/gdas/gd_designagrid.html}
 
 # Adding hawaii.sites location on the map
 	points(hawaii.sites,pch=21,col="yellow",bg=col2alpha("yellow",.9),cex=1.2)
-
+}
 }
