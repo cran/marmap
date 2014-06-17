@@ -1,17 +1,17 @@
 ### R code from vignette source 'marmap.Rnw'
 
 ###################################################
-### code chunk number 1: marmap.Rnw:23-28
+### code chunk number 1: marmap.Rnw:21-26
 ###################################################
 options(width=60,continue="  ")
 options(SweaveHooks=list(fig=function()
               par(mar=c(5.1, 4.1, 1.1, 2.1))))
 library(marmap)
-read.bathy('png.xyz', header=F, sep="\t") -> papoue
+marmap::read.bathy('png.xyz', header=F, sep="\t") -> papoue
 
 
 ###################################################
-### code chunk number 2: marmap.Rnw:47-51 (eval = FALSE)
+### code chunk number 2: marmap.Rnw:45-49 (eval = FALSE)
 ###################################################
 ## library(marmap)
 ## getNOAA.bathy(lon1 = 140, lon2 = 155, lat1 = -13, lat2 = 0, 
@@ -20,20 +20,20 @@ read.bathy('png.xyz', header=F, sep="\t") -> papoue
 
 
 ###################################################
-### code chunk number 3: marmap.Rnw:54-55
+### code chunk number 3: marmap.Rnw:52-53
 ###################################################
 summary(papoue)
 
 
 ###################################################
-### code chunk number 4: marmap.Rnw:64-65
+### code chunk number 4: marmap.Rnw:62-63
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue)
 
 
 ###################################################
-### code chunk number 5: marmap.Rnw:70-72
+### code chunk number 5: marmap.Rnw:68-70
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue, image = TRUE)
@@ -41,7 +41,7 @@ scaleBathy(papoue, deg = 2, x = "bottomleft", inset = 5)
 
 
 ###################################################
-### code chunk number 6: marmap.Rnw:77-80
+### code chunk number 6: marmap.Rnw:75-78
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 colorRampPalette(c("red","purple","blue","cadetblue1",
@@ -50,7 +50,7 @@ plot(papoue, image = TRUE, bpal = blues(100))
 
 
 ###################################################
-### code chunk number 7: marmap.Rnw:85-90
+### code chunk number 7: marmap.Rnw:83-88
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(papoue, image = TRUE, bpal = blues(100),
@@ -61,13 +61,13 @@ plot(papoue, image = TRUE, bpal = blues(100),
 
 
 ###################################################
-### code chunk number 8: marmap.Rnw:97-98
+### code chunk number 8: marmap.Rnw:95-96
 ###################################################
 get.transect(papoue, 151, -6, 153, -7, distance = TRUE)
 
 
 ###################################################
-### code chunk number 9: marmap.Rnw:104-107
+### code chunk number 9: marmap.Rnw:102-105
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 get.transect(papoue, 151, -6, 153, -7, 
@@ -76,7 +76,7 @@ plotProfile(transect)
 
 
 ###################################################
-### code chunk number 10: marmap.Rnw:140-153
+### code chunk number 10: marmap.Rnw:123-134
 ###################################################
 x = c(142.1390, 142.9593, 144.0466, 145.9141,
       145.9372, 146.0115, 145.9141, 146.8589,
@@ -89,16 +89,13 @@ y = c(-2.972065, -3.209449, -3.391399, -4.675720,
 
 paste("station",1:16, sep = "") -> station
 data.frame(x, y, station) -> sampling
-write.table(sampling, "sampling.csv", sep = ",", 
-	quote = FALSE, row.names = FALSE)
 
 
 ###################################################
-### code chunk number 11: marmap.Rnw:158-171
+### code chunk number 11: marmap.Rnw:139-151
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
-read.csv("sampling.csv", header = TRUE) -> samp
-head(samp) # a preview of the first 6 lines of the dataset. 
+head(sampling) # a preview of the first 6 lines of the dataset. 
 
 plot(papoue, image = TRUE, bpal = blues(100),
 	deep = c(-9000, -3000, 0), shallow = c(-3000, -10, 0),
@@ -107,18 +104,18 @@ plot(papoue, image = TRUE, bpal = blues(100),
 	lty = c(1, 1, 1), drawlabel = c(FALSE, FALSE, FALSE))
 
 # add points from the sampling.csv, and add text to the plot:
-points(samp$x, samp$y, pch = 21, col = "black", 
+points(sampling$x, sampling$y, pch = 21, col = "black", 
 	bg = "yellow", cex = 1.3)
 text(152, -7.2, "New Britain\nTrench", col = "white", font = 3)
 
 
 ###################################################
-### code chunk number 12: marmap.Rnw:189-214
+### code chunk number 12: marmap.Rnw:169-194
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 # make a table of fake sampling information, with fake depth
 samp.depth = sample(seq(-3000, -1000, by = 50), size = 16)
-data.frame(samp$x, samp$y, samp.depth) -> sp
+data.frame(sampling$x, sampling$y, samp.depth) -> sp
 names(sp) <- c("lon", "lat", "depth")
 head(sp)
 
@@ -138,13 +135,13 @@ blues <- ramp(mx)
 # plot points and color depth scale	
 points(sp[,1:2], col = "black", bg = blues[-sp$depth], 
 	pch = 21, cex = 1.5)
-require(shape)
+library(shape)
 colorlegend(zlim = c(mx, 0), col = rev(blues), main = "depth (m)",
 	posx = c(0.85, 0.88))
 
 
 ###################################################
-### code chunk number 13: marmap.Rnw:219-224
+### code chunk number 13: marmap.Rnw:199-204
 ###################################################
 data(hawaii)
 get.area(hawaii, level.inf = -4000, level.sup = -1000) -> bathyal
@@ -154,7 +151,7 @@ round(abyssal$Square.Km, 0) -> ab
 
 
 ###################################################
-### code chunk number 14: marmap.Rnw:229-238
+### code chunk number 14: marmap.Rnw:209-218
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 plot(hawaii, lwd = 0.2)
@@ -169,7 +166,7 @@ legend("bottomleft",
 
 
 ###################################################
-### code chunk number 15: marmap.Rnw:245-248
+### code chunk number 15: marmap.Rnw:225-228
 ###################################################
 data(hawaii, hawaii.sites)
 sites <- hawaii.sites[-c(1,4),]
@@ -177,7 +174,7 @@ rownames(sites) <- 1:4
 
 
 ###################################################
-### code chunk number 16: marmap.Rnw:356-364
+### code chunk number 16: marmap.Rnw:336-344
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 data(nw.atlantic) ; atl <- as.bathy(nw.atlantic)
@@ -191,7 +188,7 @@ get.box(atl, x1 = -68.6, x2 = -53.7, y1 = 42.4, y2 = 32.5,
 
 
 ###################################################
-### code chunk number 17: marmap.Rnw:366-372
+### code chunk number 17: marmap.Rnw:346-352
 ###################################################
 getOption("SweaveHooks")[["fig"]]()
 library(lattice)             
@@ -203,7 +200,7 @@ wireframe(out, shade = TRUE, zoom = 1.1,
 
 
 ###################################################
-### code chunk number 18: marmap.Rnw:489-492
+### code chunk number 18: marmap.Rnw:450-453
 ###################################################
 library(marmap)
 read.bathy('png.xyz', header = FALSE, sep = "\t") -> papoue
@@ -211,14 +208,14 @@ summary(papoue)
 
 
 ###################################################
-### code chunk number 19: marmap.Rnw:501-503
+### code chunk number 19: marmap.Rnw:464-466
 ###################################################
 require(RSQLite)
 setSQL(bathy = "png.xyz", sep = "\t")
 
 
 ###################################################
-### code chunk number 20: marmap.Rnw:508-511
+### code chunk number 20: marmap.Rnw:471-474
 ###################################################
 subsetSQL(min_lon = 145, max_lon = 150,
 	 min_lat = -2, max_lat = 0) -> test
@@ -226,7 +223,7 @@ summary(test)
 
 
 ###################################################
-### code chunk number 21: marmap.Rnw:516-517
+### code chunk number 21: marmap.Rnw:479-480
 ###################################################
 system("rm bathy_db")
 

@@ -23,7 +23,7 @@ get.transect = function(mat, x1, y1, x2, y2, locator=FALSE, distance=FALSE,...){
 	which.min(abs(lat-y2)) -> y2b
 	
 	if (x1b==x2b | y1b==y2b) {
-		new.bathy <- matrix(as.vector(mat[x1b:x2b, y1b:y2b]),ncol=length(y1b:y2b),nrow=length(x1b:x2b),dimnames=list(lon[x1b:x2b],lat[y1b:y2b]))
+		new.bathy <- matrix(as.vector(mat[x1b:x2b, y1b:y2b]),nrow=length(y1b:y2b),ncol=length(x1b:x2b),dimnames=list(lat[y1b:y2b],lon[x1b:x2b]))
 		depth <- as.vector(new.bathy)
 	} else {
 		new.bathy <- t(mat[x1b:x2b, y1b:y2b])

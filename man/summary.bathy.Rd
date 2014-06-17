@@ -21,7 +21,7 @@ additional arguments affecting the summary produced (see \code{base} function \c
 Information on the geographic bounds of the dataset (minimum and maximum latitude and longitude), resolution of the matrix in minutes, statistics on the depth data (e.g. min, max, median...), and a preview of the data. 
 }
 \author{
-Eric Pante
+Eric Pante and Benoit Simon-Bouhet
 }
 \seealso{
 \code{\link{read.bathy}}, \code{\link{plot.bathy}}

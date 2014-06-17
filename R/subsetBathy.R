@@ -1,5 +1,5 @@
-get.depth <- function(mat, x, y=NULL, locator=TRUE, distance=FALSE, ...){
-
+subsetBathy <- function(mat, x, y=NULL, locator=TRUE, ...) {
+	
 	if (!is(mat,"bathy")) stop("'mat' must be of class 'bathy'")
 
 	if (locator == FALSE) {
@@ -48,48 +48,50 @@ get.depth <- function(mat, x, y=NULL, locator=TRUE, distance=FALSE, ...){
 			}
 			
 		} else {
-			cat("Waiting for interactive input: click any number of times on the map, then press 'Esc'\n")
-			coord <- locator(type="p",...)
+			cat('Waiting for interactive input: click any number of times on the map\n')
+			coord <- locator(type="o",...)
 		}
-	
-	as.numeric(rownames(mat)) -> lon
-	as.numeric(colnames(mat)) -> lat
-	
-	outside.lon <- any(findInterval(coord$x,range(lon),rightmost.closed=TRUE) != 1)
-	outside.lat <- any(findInterval(coord$y,range(lat),rightmost.closed=TRUE) != 1)
-	
-	if (outside.lon | outside.lat) stop("Some data points are oustide the range of mat")
-		
-	out <- data.frame(Lon=coord$x, Lat=coord$y)
-	out$Depth <- apply(out, 1, function(x) mat[ which(abs(lon-x[1])==min(abs(lon-x[1]))) , which(abs(lat-x[2])==min(abs(lat-x[2]))) ])
-	
-	if(distance){
-		
-		if (nrow(out) == 1) stop("Cannot compute distance with only one point. Either set distance=FALSE or add more points")
-		
-		deg2km <- function(x1, y1, x2, y2) {
 
-			x1 <- x1*pi/180
-			y1 <- y1*pi/180
-			x2 <- x2*pi/180
-			y2 <- y2*pi/180
+		as.numeric(rownames(mat)) -> lon
+		as.numeric(colnames(mat)) -> lat
 
-			dx <- x2-x1
-			dy <- y2-y1
+		outside.lon <- any(findInterval(coord$x,range(lon),rightmost.closed=TRUE) != 1)
+		outside.lat <- any(findInterval(coord$y,range(lat),rightmost.closed=TRUE) != 1)
+		if (outside.lon | outside.lat) stop("Some data points are oustide the range of mat")
 
-			fo <- sin(dy/2)^2 + cos(y1) * cos(y2) * sin(dx/2)^2
-			fos <- 2 * asin(min(1,sqrt(fo)))
+		out <- data.frame(Lon=coord$x, Lat=coord$y)
 
-			return(6371 * fos)
+		if (nrow(out)==1) stop("'subset.bathy' needs at least two points")
+
+		if (nrow(out)==2) {
+			rect(min(out$Lon),min(out$Lat),max(out$Lon),max(out$Lat))
+			x1 <- which(abs(lon-out$Lon[1])==min(abs(lon-out$Lon[1])))
+			y1 <- which(abs(lat-out$Lat[1])==min(abs(lat-out$Lat[1])))
+			x2 <- which(abs(lon-out$Lon[2])==min(abs(lon-out$Lon[2])))
+			y2 <- which(abs(lat-out$Lat[2])==min(abs(lat-out$Lat[2])))
+			new.bathy <- mat[x1:x2, y1:y2]
+			new.bathy <- check.bathy(new.bathy)
+			class(new.bathy) <- "bathy"
+			
 		}
+
+		if (nrow(out)>2) {
+			x1 <- which(abs(lon-min(out$Lon))==min(abs(lon-min(out$Lon))))
+			y1 <- which(abs(lat-min(out$Lat))==min(abs(lat-min(out$Lat))))
+			x2 <- which(abs(lon-max(out$Lon))==min(abs(lon-max(out$Lon))))
+			y2 <- which(abs(lat-max(out$Lat))==min(abs(lat-max(out$Lat))))
+			new.bathy <- mat[x1:x2, y1:y2]
+			new.bathy <- check.bathy(new.bathy)
+			class(new.bathy) <- "bathy"
 		
-		dist.km = NULL
-		for(i in 1:length(out$Depth)){
-			dist.km = c(dist.km, deg2km(x1=out$Lon[1],y1=out$Lat[1],x2=out$Lon[i],y2=out$Lat[i]))
+			xyz <- as.matrix(as.xyz(new.bathy))
+			out <- as.matrix(out)
+			inside <- sp::point.in.polygon(xyz[,1],xyz[,2],out[,1],out[,2])
+			xyz[inside==0,3] <- NA
+			new.bathy <- as.bathy(xyz)
 		}
-		out$Dist.km <- dist.km
-	}
+
 	
-	return(out)
+		return(new.bathy)
 
 }
