@@ -1,6 +1,12 @@
-get.depth <- function(mat, x, y=NULL, locator=TRUE, distance=FALSE, ...){
-
+dist2isobath <- function(mat, x, y=NULL, isobath=0, locator=FALSE, ...) {
+	
 	if (!is(mat,"bathy")) stop("'mat' must be of class 'bathy'")
+
+	if (!is.numeric(isobath)) stop("'isobath' must be numeric")
+	if (length(isobath) >1) {
+		isobath <- isobath[1]
+		warning("'isobath' must be a single depth or altitude value. Only the first value was used.")
+	}
 
 	if (locator == FALSE) {
 
@@ -50,46 +56,23 @@ get.depth <- function(mat, x, y=NULL, locator=TRUE, distance=FALSE, ...){
 		} else {
 			cat("Waiting for interactive input: click any number of times on the map, then press 'Esc'\n")
 			coord <- locator(type="p",...)
-		}
-	
-	as.numeric(rownames(mat)) -> lon
-	as.numeric(colnames(mat)) -> lat
-	
-	outside.lon <- any(findInterval(coord$x,range(lon),rightmost.closed=TRUE) != 1)
-	outside.lat <- any(findInterval(coord$y,range(lat),rightmost.closed=TRUE) != 1)
-	
-	if (outside.lon | outside.lat) stop("Some data points are oustide the range of mat")
+		}	
 		
-	out <- data.frame(Lon=coord$x, Lat=coord$y)
-	out$Depth <- apply(out, 1, function(x) mat[ which(abs(lon-x[1])==min(abs(lon-x[1]))) , which(abs(lat-x[2])==min(abs(lat-x[2]))) ][1])
+	coord <- data.frame(x = coord$x, y = coord$y)
+		
+	# Get contour lines for a given isobath
+	lon <- unique(as.numeric(rownames(mat)))
+	lat <- unique(as.numeric(colnames(mat)))
+	iso <- contourLines(lon, lat, mat, levels = isobath)
+		
+	# Transform the list from contourLines into a SpatialLines
+	iso <- lapply(iso, function(k) sp::Line(matrix(c(k$x,k$y),ncol=2)))
+	iso <- sp::SpatialLines(list(sp::Lines(iso, ID = "a")))
 	
-	if(distance){
-		
-		if (nrow(out) == 1) stop("Cannot compute distance with only one point. Either set distance=FALSE or add more points")
-		
-		deg2km <- function(x1, y1, x2, y2) {
-
-			x1 <- x1*pi/180
-			y1 <- y1*pi/180
-			x2 <- x2*pi/180
-			y2 <- y2*pi/180
-
-			dx <- x2-x1
-			dy <- y2-y1
-
-			fo <- sin(dy/2)^2 + cos(y1) * cos(y2) * sin(dx/2)^2
-			fos <- 2 * asin(min(1,sqrt(fo)))
-
-			return(6371 * fos)
-		}
-		
-		dist.km = NULL
-		for(i in 1:length(out$Depth)){
-			dist.km = c(dist.km, deg2km(x1=out$Lon[1],y1=out$Lat[1],x2=out$Lon[i],y2=out$Lat[i]))
-		}
-		out$Dist.km <- dist.km
-	}
+	# Compute the shortest great circle distance between each point and the isobath
+	d <- suppressWarnings(geosphere::dist2Line(coord,iso))
 	
-	return(out)
-
+	d <- data.frame(d[,1],coord,d[,2:3])
+	colnames(d) <- c("distance", "start.lon", "start.lat", "end.lon", "end.lat")
+	return(d)
 }
