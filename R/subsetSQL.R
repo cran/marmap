@@ -1,7 +1,7 @@
-subsetSQL = function(min_lon, max_lon, min_lat, max_lat){
+subsetSQL = function(min_lon, max_lon, min_lat, max_lat, db.name="bathy_db"){
 
 	# prepare ("connect") SQL database
-	con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "bathy_db")
+	con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db.name)
 
 	cn <- DBI::dbListFields(con,"bathy_db")
 
@@ -14,5 +14,6 @@ subsetSQL = function(min_lon, max_lon, min_lat, max_lat){
     data <- DBI::fetch(res, n = -1)
 	DBI::dbClearResult(res)
 	DBI::dbDisconnect(con)
+	if (!is.numeric(data[,3])) data[,3] <- suppressWarnings(as.numeric(data[,3]))
     return(as.bathy(data))
 }

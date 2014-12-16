@@ -1,10 +1,10 @@
-read.bathy <- function(xyz, header=FALSE, sep=","){
+read.bathy <- function(xyz, header=FALSE, sep=",", ...){
 
 ### xyz: three-column table with longitude (x), latitude (y) and depth (z) (no default)
 ### header: whether this table has a row of column names (default = FALSE)
 ### sep: character separating columns, (default=",")
 
-	bath <- read.table(xyz, header = header, sep = sep)
+	bath <- read.table(xyz, header = header, sep = sep, ...)
 	bath <- bath[order(bath[, 2], bath[, 1], decreasing = FALSE), ]
 
     lat <- unique(bath[, 2]) ; bcol <- length(lat)
