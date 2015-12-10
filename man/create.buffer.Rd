@@ -1,5 +1,6 @@
 \name{create.buffer}
 \alias{create.buffer}
+\alias{print.buffer}
 \title{
 Create a buffer of specified radius around one or several points
 }
@@ -7,10 +8,10 @@ Create a buffer of specified radius around one or several points
 Create a circular buffer of user-defined radius around one or several points defined by their longitudes and latitudes.
 }
 \usage{
-create.buffer(mat, loc, radius, km = FALSE)
+create.buffer(x, loc, radius, km = FALSE)
 }
 \arguments{
-  \item{mat}{
+  \item{x}{
 an object of class \code{bathy}
 }
   \item{loc}{
@@ -42,14 +43,15 @@ data(florida)
 plot(florida, lwd = 0.2)
 plot(florida, n = 1, lwd = 0.7, add = TRUE)
 
-# add points around which a buffer will be computed
-loc <- data.frame(c(-80,-82), c(26,24))
+# add a point around which a buffer will be created
+loc <- data.frame(-80, 26)
 points(loc, pch = 19, col = "red")
 
-# compute buffer
+# compute and print buffer
 buf <- create.buffer(florida, loc, radius=1.5)
+buf
 
 # highlight isobath with the buffer and add outline
-plot(buf, add = TRUE, n = 10, col = 2, lwd=.4)
-plot(outline.buffer(buf), add = TRUE, lwd = 0.7, col = 2)
+plot(buf, outline=FALSE, n = 10, col = 2, lwd=.4)
+plot(buf, lwd = 0.7, fg = 2)
 }
