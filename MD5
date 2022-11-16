@@ -1,4 +1,4 @@
-189f6cee30cb8c98811ae6dc7a7c0d25 *DESCRIPTION
+27f4a3812d10931b84eee66cfda8322e *DESCRIPTION
 457ace34d8313690b48908c68b6af47a *NAMESPACE
 66fa280882d552b909c5764695180def *R/antimeridian.box.R
 b66303c59c0ec738e65223356e87ce61 *R/as.SpatialGridDataFrame.R
@@ -19,7 +19,7 @@ cd1d124f51a8bd99b96e07389494b130 *R/fortify.bathy.R
 c48e26537afeec72aa71321897a658b5 *R/get.depth.R
 57ed45c4de71de8fffe88a86c22b8e03 *R/get.sample.R
 4df9226e219958d03f3002d27654ec16 *R/get.transect.R
-66bb4d3fd4864f94ef3d702af18df805 *R/getNOAA.bathy.R
+ef67a0acb4b826b743eac36a343c590e *R/getNOAA.bathy.R
 bedb032039cdf4a20ce2c6acf154b76f *R/griddify.R
 e97b07323a16c24a9465c102551debe2 *R/is.bathy.R
 abdcbb308d580fa152474328e87462b7 *R/lc.dist.R
@@ -53,12 +53,11 @@ c73372c3e3603464073fb81f34d81277 *data/hawaii.rda
 3e849eabf0be0ac69ff78f2a174c4b17 *data/metallo.rda
 700690729ef12a2adf4848502b200420 *data/nw.atlantic.coast.rda
 5384108d0595e1b6b196583ff7ab93ab *data/nw.atlantic.rda
-9fe51ac66523aec0cd18ab9128971294 *inst/CITATION
-0c0bbe5c5f13bc18b624b7f4afc857fc *inst/doc/marmap-DataAnalysis.pdf
+03b35cd2d102af88d295193474eb1453 *inst/doc/marmap-DataAnalysis.pdf
 7b85fd65ca7daeb6d029bbdffc2b9bc6 *inst/doc/marmap-DataAnalysis.pdf.asis
 f7bfccff085f8ab4d0c2e2c68baac6fa *inst/doc/marmap-ImportExport.pdf
 bc22325bbd48b3224e4a35443b5b3fcf *inst/doc/marmap-ImportExport.pdf.asis
-0a6722b88e3614ac9ee62304879c05a9 *inst/doc/marmap.pdf
+6c45ee99d3532c334df788bd007ad58c *inst/doc/marmap.pdf
 1caacea92517c3316455be51b9c62626 *inst/doc/marmap.pdf.asis
 04ccb86a7233ed6f41bb6b01d8ac5e26 *man/aleutians.Rd
 871928a6b3ac3dfd231237475e45cf6f *man/antimeridian.box.Rd
@@ -90,7 +89,7 @@ fa763c3d5c55284cc0927a1869e30522 *man/irregular.Rd
 dcbce57bab739d3dfb9c997fc9780d48 *man/is.bathy.Rd
 482f0dd95748e7dcb60e8db2354b97b7 *man/lc.dist.Rd
 91c119d4544bd842b0ac1bd6c7d2b734 *man/linesGC.Rd
-bc8ecf8f44ee06cb730bb0f9e1c64652 *man/marmap.Rd
+85f6215d9e58a1aa1f1a72538130a018 *man/marmap.Rd
 0eab86c68c511dce1d27e30986e47155 *man/metallo.Rd
 7053c94094ce2d77a39332bc82705a32 *man/nw.atlantic.Rd
 1848c43b88189287b07c9b1be8b870cf *man/nw.atlantic.coast.Rd
